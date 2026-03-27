@@ -3,191 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dreamweaver | Digital Grimoire</title>
+    <title>Dreamweaver | Grimoire</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400&display=swap" rel="stylesheet">
     <style>
         :root { --dream-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
-        body { font-family: 'Inter', sans-serif; background: var(--dream-gradient); background-attachment: fixed; color: white; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background: var(--dream-gradient); background-attachment: fixed; color: white; min-height: 100vh; overflow-x: hidden; padding-bottom: 100px; }
+        .haze { position: fixed; inset: 0; background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.05), transparent 70%); filter: blur(60px); z-index: -1; animation: pulse 10s infinite alternate; }
+        @keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
         
-        .haze-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.1), transparent 70%); filter: blur(80px); z-index: -1; animation: pulse 15s infinite alternate; }
-        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.3); } }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; }
+        .btn-step { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 6px; font-size: 14px; transition: 0.2s; }
+        .btn-step:hover { background: rgba(255,255,255,0.2); }
+        
+        [contenteditable="true"]:focus { outline: none; color: #93c5fd; }
+        
+        /* Floating Dice Dock */
+        .dice-dock { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; padding: 12px; z-index: 100; }
+        .die-btn { padding: 8px 12px; font-size: 10px; font-weight: 300; letter-spacing: 1px; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+        .die-btn:hover { background: rgba(59, 130, 246, 0.2); transform: translateY(-3px); }
 
-        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px) saturate(120%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; transition: all 0.4s ease; }
-        
-        /* Interactive States */
-        [contenteditable="true"]:focus { outline: none; color: #93c5fd; text-shadow: 0 0 15px rgba(147, 197, 253, 0.5); }
-        .attribute-orb:hover { transform: scale(1.02); background: rgba(255, 255, 255, 0.07); }
-        
-        .map-slot { aspect-ratio: 16/9; background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 16px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .map-slot img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; transition: opacity 0.5s; }
-        .map-slot:hover img { opacity: 1; }
+        .log-container { max-height: 150px; overflow-y: auto; scrollbar-width: none; mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent); }
     </style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="haze-overlay"></div>
+<body class="p-6 md:p-12">
+    <div class="haze"></div>
 
-    <main class="max-w-5xl mx-auto space-y-10">
+    <main class="max-w-5xl mx-auto space-y-12">
         
-        <header class="flex flex-col md:flex-row justify-between items-end gap-6">
-            <div class="w-full md:w-auto">
-                <h1 id="char-name" contenteditable="true" class="text-5xl font-extralight tracking-tighter uppercase opacity-90">Character Name</h1>
-                <p id="char-tagline" contenteditable="true" class="text-sm tracking-[0.3em] text-blue-300 opacity-50 uppercase mt-2">Class • Origin • Milestone</p>
-            </div>
-            
-            <div class="glass px-10 py-5 flex gap-12 text-center">
-                <div class="group cursor-pointer" onclick="adjustStat('life-val', -1)">
-                    <span id="life-val" contenteditable="true" class="block text-3xl font-light">20</span>
-                    <span class="text-[10px] uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity">Life Force</span>
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div class="space-y-1">
+                <h1 id="char-name" contenteditable="true" class="text-5xl font-extralight tracking-tighter uppercase">NAME</h1>
+                <div class="flex items-center gap-4 text-blue-300 opacity-50 text-sm tracking-widest uppercase">
+                    <span id="char-class" contenteditable="true">CLASS</span>
+                    <span class="opacity-30">|</span>
+                    <div class="flex items-center gap-3">
+                        <span>LVL</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="step('lvl-val', -1)" class="btn-step">-</button>
+                            <span id="lvl-val">1</span>
+                            <button onclick="step('lvl-val', 1)" class="btn-step">+</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="group cursor-pointer" onclick="adjustStat('token-val', 1)">
-                    <span id="token-val" contenteditable="true" class="block text-3xl font-light text-purple-300">0</span>
-                    <span class="text-[10px] uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity">Tokens</span>
+            </div>
+
+            <div class="glass px-8 py-4 flex gap-10">
+                <div class="text-center">
+                    <span class="text-[10px] uppercase tracking-widest opacity-40 block mb-2">Life Force</span>
+                    <div class="flex items-center gap-4">
+                        <button onclick="step('life-val', -1)" class="btn-step">-</button>
+                        <span id="life-val" class="text-3xl font-light w-12">20</span>
+                        <button onclick="step('life-val', 1)" class="btn-step">+</button>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <span class="text-[10px] uppercase tracking-widest opacity-40 block mb-2">Tokens</span>
+                    <div class="flex items-center gap-4">
+                        <button onclick="step('token-val', -1)" class="btn-step">-</button>
+                        <span id="token-val" class="text-3xl font-light text-purple-300 w-8">0</span>
+                        <button onclick="step('token-val', 1)" class="btn-step">+</button>
+                    </div>
                 </div>
             </div>
         </header>
 
         <section class="grid grid-cols-2 md:grid-cols-6 gap-4">
-            <div class="glass attribute-orb p-4 text-center space-y-1">
-                <div id="label-1" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Brawn</div>
-                <div id="val-1" contenteditable="true" class="text-2xl font-light" onfocus="this.innerText=''" onblur="if(this.innerText=='')this.innerText='+0'">+2</div>
-                <button onclick="rollAttr('label-1', 'val-1')" class="text-[9px] uppercase opacity-20 hover:opacity-100 tracking-tighter mt-2 border border-white/10 px-2 rounded">Roll d20</button>
+            <div class="glass p-5 text-center space-y-2">
+                <div id="at-l-1" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Brawn</div>
+                <div id="at-v-1" contenteditable="true" class="text-2xl font-light">+0</div>
+                <button onclick="rollWithMod('at-l-1', 'at-v-1')" class="text-[9px] opacity-30 hover:opacity-100 uppercase border border-white/10 px-2 py-1 rounded">Check</button>
             </div>
-            <div class="glass attribute-orb p-4 text-center space-y-1">
-                <div id="label-2" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Intellect</div>
-                <div id="val-2" contenteditable="true" class="text-2xl font-light">+3</div>
-                <button onclick="rollAttr('label-2', 'val-2')" class="text-[9px] uppercase opacity-20 hover:opacity-100 tracking-tighter mt-2 border border-white/10 px-2 rounded">Roll d20</button>
+            <div class="glass p-5 text-center space-y-2">
+                <div id="at-l-2" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Intellect</div>
+                <div id="at-v-2" contenteditable="true" class="text-2xl font-light">+0</div>
+                <button onclick="rollWithMod('at-l-2', 'at-v-2')" class="text-[9px] opacity-30 hover:opacity-100 uppercase border border-white/10 px-2 py-1 rounded">Check</button>
             </div>
-            <div class="glass attribute-orb p-4 text-center space-y-1">
-                <div id="label-3" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Empathy</div>
-                <div id="val-3" contenteditable="true" class="text-2xl font-light">+1</div>
-                <button onclick="rollAttr('label-3', 'val-3')" class="text-[9px] uppercase opacity-20 hover:opacity-100 tracking-tighter mt-2 border border-white/10 px-2 rounded">Roll d20</button>
+            <div class="glass p-5 text-center space-y-2">
+                <div id="at-l-3" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Empathy</div>
+                <div id="at-v-3" contenteditable="true" class="text-2xl font-light">+0</div>
+                <button onclick="rollWithMod('at-l-3', 'at-v-3')" class="text-[9px] opacity-30 hover:opacity-100 uppercase border border-white/10 px-2 py-1 rounded">Check</button>
             </div>
-            <div class="glass attribute-orb p-4 text-center space-y-1">
-                <div id="label-4" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Sense</div>
-                <div id="val-4" contenteditable="true" class="text-2xl font-light">+2</div>
-                <button onclick="rollAttr('label-4', 'val-4')" class="text-[9px] uppercase opacity-20 hover:opacity-100 tracking-tighter mt-2 border border-white/10 px-2 rounded">Roll d20</button>
+            <div class="glass p-5 text-center space-y-2">
+                <div id="at-l-4" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Sense</div>
+                <div id="at-v-4" contenteditable="true" class="text-2xl font-light">+0</div>
+                <button onclick="rollWithMod('at-l-4', 'at-v-4')" class="text-[9px] opacity-30 hover:opacity-100 uppercase border border-white/10 px-2 py-1 rounded">Check</button>
             </div>
-            <div class="glass attribute-orb p-4 text-center space-y-1">
-                <div id="label-5" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Agility</div>
-                <div id="val-5" contenteditable="true" class="text-2xl font-light">+2</div>
-                <button onclick="rollAttr('label-5', 'val-5')" class="text-[9px] uppercase opacity-20 hover:opacity-100 tracking-tighter mt-2 border border-white/10 px-2 rounded">Roll d20</button>
+            <div class="glass p-5 text-center space-y-2">
+                <div id="at-l-5" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Agility</div>
+                <div id="at-v-5" contenteditable="true" class="text-2xl font-light">+0</div>
+                <button onclick="rollWithMod('at-l-5', 'at-v-5')" class="text-[9px] opacity-30 hover:opacity-100 uppercase border border-white/10 px-2 py-1 rounded">Check</button>
             </div>
-            <div class="glass attribute-orb p-4 text-center space-y-1">
-                <div id="label-6" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Fortitude</div>
-                <div id="val-6" contenteditable="true" class="text-2xl font-light">+4</div>
-                <button onclick="rollAttr('label-6', 'val-6')" class="text-[9px] uppercase opacity-20 hover:opacity-100 tracking-tighter mt-2 border border-white/10 px-2 rounded">Roll d20</button>
+            <div class="glass p-5 text-center space-y-2">
+                <div id="at-l-6" contenteditable="true" class="text-[10px] uppercase tracking-widest opacity-40">Fortitude</div>
+                <div id="at-v-6" contenteditable="true" class="text-2xl font-light">+0</div>
+                <button onclick="rollWithMod('at-l-6', 'at-v-6')" class="text-[9px] opacity-30 hover:opacity-100 uppercase border border-white/10 px-2 py-1 rounded">Check</button>
             </div>
         </section>
 
-        <section class="grid md:grid-cols-2 gap-10">
-            <div class="space-y-6">
-                <div class="flex justify-between items-center px-2">
-                    <h2 contenteditable="true" class="text-xs font-light tracking-[0.4em] opacity-40 uppercase">Reliquary</h2>
-                    <button onclick="addArtifact()" class="text-[10px] uppercase tracking-widest bg-white/5 hover:bg-white/10 px-4 py-1 rounded-full border border-white/10 transition-all">+ Manifest</button>
-                </div>
-                <div id="artifact-list" class="space-y-4">
-                    </div>
-            </div>
-
-            <div class="space-y-6">
-                <h2 contenteditable="true" class="text-xs font-light tracking-[0.4em] opacity-40 uppercase">Mind's Eye</h2>
-                <div class="glass p-6 space-y-4">
-                    <div id="map-container" class="map-slot cursor-pointer" onclick="updateMap()">
-                        <span id="map-placeholder" class="text-[10px] uppercase tracking-widest opacity-20">Tap to project image URL</span>
-                    </div>
-                    <p id="scene-notes" contenteditable="true" class="text-sm font-light opacity-60 italic leading-relaxed text-center px-4">"The spire pulses with a soft violet light..."</p>
-                </div>
+        <section class="max-w-xl mx-auto text-center">
+            <h2 class="text-[10px] uppercase tracking-[0.4em] opacity-30 mb-4">The Chronicle</h2>
+            <div id="dice-log" class="log-container space-y-2 text-sm font-extralight text-blue-200">
+                <div class="opacity-20 italic">Awaiting fate...</div>
             </div>
         </section>
 
     </main>
 
-    <div id="roll-overlay" class="fixed bottom-12 left-1/2 -translate-x-1/2 glass px-10 py-4 opacity-0 transition-all duration-700 pointer-events-none transform translate-y-10">
-        <span id="roll-output" class="text-xl font-extralight tracking-[0.2em]"></span>
+    <div class="dice-dock glass">
+        <button onclick="rollRaw(2)" class="die-btn">D2</button>
+        <button onclick="rollRaw(4)" class="die-btn">D4</button>
+        <button onclick="rollRaw(6)" class="die-btn">D6</button>
+        <button onclick="rollRaw(8)" class="die-btn">D8</button>
+        <button onclick="rollRaw(10)" class="die-btn">D10</button>
+        <button onclick="rollRaw(12)" class="die-btn">D12</button>
+        <button onclick="rollRaw(20)" class="die-btn">D20</button>
     </div>
 
     <script>
-        // --- Persistence for all editable fields ---
-        const saveFields = () => {
-            const data = {};
-            document.querySelectorAll('[contenteditable="true"]').forEach(el => {
-                if(el.id) data[el.id] = el.innerText;
-            });
-            localStorage.setItem('dreamData', JSON.stringify(data));
-        };
+        // --- Core Stepper Logic ---
+        function step(id, amt) {
+            const el = document.getElementById(id);
+            let val = parseInt(el.innerText) + amt;
+            
+            // Token Cap Logic
+            if(id === 'token-val') {
+                if(val > 3) val = 3;
+                if(val < 0) val = 0;
+            }
+            if(id === 'lvl-val' && val < 1) val = 1;
+            if(id === 'life-val' && val < 0) val = 0;
 
-        const loadFields = () => {
-            const saved = JSON.parse(localStorage.getItem('dreamData'));
+            el.innerText = val;
+            saveAll();
+        }
+
+        // --- Rolling Logic ---
+        function addLog(msg) {
+            const log = document.getElementById('dice-log');
+            if(log.innerText.includes("Awaiting fate")) log.innerHTML = "";
+            const entry = document.createElement('div');
+            entry.className = "animate-in fade-in slide-in-from-bottom duration-500";
+            entry.innerText = `[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}] ${msg}`;
+            log.prepend(entry);
+        }
+
+        function rollRaw(sides) {
+            const res = Math.floor(Math.random() * sides) + 1;
+            addLog(`Rolled D${sides}: Result ${res}`);
+        }
+
+        function rollWithMod(labelId, valId) {
+            const label = document.getElementById(labelId).innerText;
+            const mod = parseInt(document.getElementById(valId).innerText) || 0;
+            const roll = Math.floor(Math.random() * 20) + 1;
+            addLog(`${label} Check: ${roll} + (${mod}) = ${roll + mod}`);
+        }
+
+        // --- Persistence ---
+        function saveAll() {
+            const data = {};
+            document.querySelectorAll('[id]').forEach(el => {
+                if(el.contentEditable === "true" || el.id.includes("-val")) {
+                    data[el.id] = el.innerText;
+                }
+            });
+            localStorage.setItem('dreamDataV3', JSON.stringify(data));
+        }
+
+        function loadAll() {
+            const saved = JSON.parse(localStorage.getItem('dreamDataV3'));
             if(saved) {
                 Object.keys(saved).forEach(id => {
                     const el = document.getElementById(id);
                     if(el) el.innerText = saved[id];
                 });
             }
-            // Load map if exists
-            const savedMap = localStorage.getItem('dreamMap');
-            if(savedMap) renderMap(savedMap);
-        };
-
-        document.addEventListener('input', saveFields);
-        window.onload = loadFields;
-
-        // --- Stat Adjusters ---
-        function adjustStat(id, amt) {
-            const el = document.getElementById(id);
-            el.innerText = parseInt(el.innerText) + amt;
-            saveFields();
         }
 
-        // --- Dice Logic ---
-        function rollAttr(labelId, valId) {
-            const label = document.getElementById(labelId).innerText;
-            const mod = parseInt(document.getElementById(valId).innerText) || 0;
-            const roll = Math.floor(Math.random() * 20) + 1;
-            
-            const output = document.getElementById('roll-output');
-            const overlay = document.getElementById('roll-overlay');
-            
-            output.innerText = `${label}: ${roll} + ${mod} = ${roll + mod}`;
-            overlay.style.opacity = "1";
-            overlay.style.transform = "translateY(0) translateX(-50%)";
-            
-            setTimeout(() => {
-                overlay.style.opacity = "0";
-                overlay.style.transform = "translateY(20px) translateX(-50%)";
-            }, 4000);
-        }
-
-        // --- Artifacts ---
-        function addArtifact() {
-            const list = document.getElementById('artifact-list');
-            const item = document.createElement('div');
-            item.className = "glass p-5 animate-in slide-in-from-right duration-500 group";
-            item.innerHTML = `
-                <div class="flex justify-between items-start">
-                    <h3 contenteditable="true" class="font-light tracking-widest text-blue-200 outline-none">NEW ITEM</h3>
-                    <button onclick="this.parentElement.parentElement.remove(); saveFields();" class="opacity-0 group-hover:opacity-20 text-[10px]">DISSOLVE</button>
-                </div>
-                <p contenteditable="true" class="text-xs opacity-50 font-light mt-2 outline-none italic leading-relaxed text-blue-50/80">Describe the dream-logic of this object...</p>
-            `;
-            list.appendChild(item);
-            saveFields();
-        }
-
-        // --- Map / Mind's Eye ---
-        function updateMap() {
-            const url = prompt("Enter the URL of a dream image or map:");
-            if(url) {
-                renderMap(url);
-                localStorage.setItem('dreamMap', url);
-            }
-        }
-
-        function renderMap(url) {
-            const container = document.getElementById('map-container');
-            container.innerHTML = `<img src="${url}" alt="Dream Scene">`;
-        }
+        document.addEventListener('input', saveAll);
+        window.onload = loadAll;
     </script>
 </body>
 </html>
