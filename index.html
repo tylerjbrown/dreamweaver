@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dreamweaver | Digital Grimoire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dream-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dream-gradient);
+            background-attachment: fixed;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* The Animated Haze Layer */
+        .haze-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.1), transparent 70%);
+            filter: blur(80px);
+            z-index: -1;
+            animation: pulse 15s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1) translate(0, 0); }
+            to { transform: scale(1.5) translate(5%, 5%); }
+        }
+
+        /* Glassmorphism Classes */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px) saturate(120%);
+            -webkit-backdrop-filter: blur(20px) saturate(120%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .attribute-orb {
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .attribute-orb:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="haze-overlay"></div>
+
+    <main class="max-w-4xl mx-auto space-y-8">
+        
+        <header class="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div>
+                <h1 class="text-4xl font-extralight tracking-widest uppercase opacity-80">Elias Thorne</h1>
+                <p class="text-sm tracking-widest text-blue-300 opacity-60">DREAM WALKER • MILESTONE 3</p>
+            </div>
+            
+            <div class="glass px-8 py-4 flex gap-10 text-center">
+                <div>
+                    <span class="block text-2xl font-light">42</span>
+                    <span class="text-[10px] uppercase tracking-tighter opacity-50">Life Force</span>
+                </div>
+                <div>
+                    <span class="block text-2xl font-light text-purple-300">2</span>
+                    <span class="text-[10px] uppercase tracking-tighter opacity-50">Tokens</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="grid grid-cols-3 md:grid-cols-6 gap-4">
+            <div class="glass attribute-orb flex flex-col items-center p-4">
+                <span class="text-xs opacity-40 uppercase mb-1">BRN</span>
+                <span class="text-xl">+2</span>
+            </div>
+            <div class="glass attribute-orb flex flex-col items-center p-4">
+                <span class="text-xs opacity-40 uppercase mb-1">INT</span>
+                <span class="text-xl">+4</span>
+            </div>
+            <div class="glass attribute-orb flex flex-col items-center p-4">
+                <span class="text-xs opacity-40 uppercase mb-1">EMP</span>
+                <span class="text-xl">+1</span>
+            </div>
+            <div class="glass attribute-orb flex flex-col items-center p-4">
+                <span class="text-xs opacity-40 uppercase mb-1">SNS</span>
+                <span class="text-xl">+3</span>
+            </div>
+            <div class="glass attribute-orb flex flex-col items-center p-4">
+                <span class="text-xs opacity-40 uppercase mb-1">AGL</span>
+                <span class="text-xl">+2</span>
+            </div>
+            <div class="glass attribute-orb flex flex-col items-center p-4">
+                <span class="text-xs opacity-40 uppercase mb-1">FOR</span>
+                <span class="text-xl">+5</span>
+            </div>
+        </section>
+
+        <section class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-4">
+                <h2 class="text-sm font-light tracking-[0.2em] opacity-50 uppercase ml-2">The Reliquary</h2>
+                <div class="glass p-6 space-y-4 group">
+                    <div class="h-32 w-full bg-white/5 rounded-xl overflow-hidden border border-white/10">
+                        <div class="w-full h-full flex items-center justify-center opacity-20 italic font-extralight">Echo of the Void</div>
+                    </div>
+                    <div>
+                        <h3 class="font-light">The Obsidian Compass</h3>
+                        <p class="text-xs text-white/50 leading-relaxed mt-1">A pulsing stone that points toward the nearest Dream Spire. Grants +1 to Sense rolls.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h2 class="text-sm font-light tracking-[0.2em] opacity-50 uppercase ml-2">Mind's Eye</h2>
+                <div class="glass p-6 min-h-[200px]">
+                    <textarea class="bg-transparent w-full h-full border-none focus:ring-0 text-sm font-light leading-relaxed placeholder:opacity-20" placeholder="Type sensory details or current dream logic here..."></textarea>
+                </div>
+            </div>
+        </section>
+
+    </main>
+</body>
+</html>
